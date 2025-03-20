@@ -72,7 +72,6 @@ def main():
     dp.add_handler(CommandHandler("join", join))
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, guess))
 
-    # اجرای Polling به‌جای Webhook
     updater.start_polling()
     updater.idle()
 
