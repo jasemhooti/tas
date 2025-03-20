@@ -21,7 +21,7 @@ if [ -d "telegram-dice-bot" ]; then
     cd telegram-dice-bot && git pull
 else
     echo "📥 دریافت سورس کد از گیت‌هاب..."
-    git clone https://github.com/jasemhooti/telegram-dice-bot.git
+    git clone https://github.com/jasemhooti/tas.git
     cd telegram-dice-bot
 fi
 
