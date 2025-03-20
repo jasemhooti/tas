@@ -16,13 +16,13 @@ echo "📦 در حال نصب کتابخانه‌های پایتون..."
 pip3 install python-telegram-bot --upgrade
 
 # دریافت سورس کد از گیت‌هاب
-if [ -d "telegram-dice-bot" ]; then
+if [ -d "tas" ]; then
     echo "🔄 بروزرسانی سورس کد..."
-    cd telegram-dice-bot && git pull
+    cd tas && git pull
 else
     echo "📥 دریافت سورس کد از گیت‌هاب..."
     git clone https://github.com/jasemhooti/tas.git
-    cd telegram-dice-bot
+    cd tas
 fi
 
 # ذخیره توکن و آیدی ادمین
@@ -32,7 +32,7 @@ echo "ADMIN_ID=$ADMIN_ID" >> .env
 
 # اجرای ربات به صورت دائمی با `systemd`
 echo "🚀 تنظیم ربات برای اجرا به‌صورت دائمی..."
-cat <<EOF | sudo tee /etc/systemd/system/dicebot.service
+cat <<EOF | sudo tee /etc/systemd/system/tasbot.service
 [Unit]
 Description=Telegram Dice Bot
 After=network.target
@@ -51,9 +51,9 @@ EOF
 
 # فعال‌سازی و اجرای سرویس
 sudo systemctl daemon-reload
-sudo systemctl enable dicebot
-sudo systemctl restart dicebot
+sudo systemctl enable tasbot
+sudo systemctl restart tasbot
 
 echo "✅ ربات با موفقیت نصب و اجرا شد!"
 echo "برای بررسی وضعیت ربات از این دستور استفاده کنید:"
-echo "sudo systemctl status dicebot"
+echo "sudo systemctl status tasbot"
