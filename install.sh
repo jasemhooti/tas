@@ -15,8 +15,8 @@ git clone https://github.com/jasemhooti/tas.git
 cd tas
 
 # دریافت اطلاعات مورد نیاز
-read -p "📌 لطفاً توکن ربات را وارد کنید: " BOT_TOKEN
-read -p "📌 لطفاً آیدی عددی ادمین را وارد کنید: " ADMIN_ID
+read -p "token" BOT_TOKEN
+read -p "id telgram" ADMIN_ID
 
 # ذخیره اطلاعات در فایل .env
 echo "BOT_TOKEN=$BOT_TOKEN" > .env
