@@ -7,6 +7,10 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = os.getenv("ADMIN_ID")
 
+if not TOKEN or not ADMIN_ID:
+    print("❌ خطا: لطفاً توکن و آیدی ادمین را در فایل .env وارد کنید.")
+    exit()
+
 # دیکشنری برای نگهداری وضعیت کاربران
 game_sessions = {}
 
@@ -61,13 +65,14 @@ def guess(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("❌ حدس شما اشتباه بود، نفر بعدی حدس بزند.")
 
 def main():
-    updater = Updater(TOKEN)
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("join", join))
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, guess))
 
+    # اجرای Polling به‌جای Webhook
     updater.start_polling()
     updater.idle()
 
