@@ -1,55 +1,47 @@
 import logging
-import random
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import random
 
-# تنظیمات لاگینگ برای نمایش ارورها در کنسول
+# تنظیمات لوگ
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# تابع شروع که دستور `/start` رو پردازش می‌کند
+# توکن ربات تلگرام شما
+TOKEN = "6414210268:AAEL-RZiABoMzS_QY922hOQnpXcam9OgiF0"
+
+# فرمان شروع
 def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('سلام! برای بازی تاس دو نفره به من عدد بگو.')
+    update.message.reply_text('سلام! من ربات تاس اندازی هستم. برای شروع بازی بگو /play')
 
-# تابع بازی که برای حدس تاس انجام می‌شود
-def play_dice(update: Update, context: CallbackContext) -> None:
-    try:
-        # دریافت عدد حدس زده شده از کاربر
-        user_guess = int(update.message.text)
+# فرمان بازی
+def play(update: Update, context: CallbackContext) -> None:
+    user_choice = context.args[0] if context.args else None
+    if not user_choice or not user_choice.isdigit() or int(user_choice) not in [1, 2, 3, 4, 5, 6]:
+        update.message.reply_text("لطفاً یک عدد از 1 تا 6 را انتخاب کن.")
+        return
+    
+    # تاس انداختن
+    dice_roll = random.randint(1, 6)
+    if int(user_choice) == dice_roll:
+        update.message.reply_text(f"تبریک! شما درست حدس زدید. تاس افتاد: {dice_roll}")
+    else:
+        update.message.reply_text(f"متاسفم! شما باختید. تاس افتاد: {dice_roll}")
 
-        # پرتاب تاس
-        dice_roll = random.randint(1, 6)
-
-        # مقایسه حدس کاربر با عدد پرتاب شده
-        if user_guess == dice_roll:
-            update.message.reply_text(f'تبریک! شما برنده شدید! تاس پرتاب شده: {dice_roll}')
-        else:
-            update.message.reply_text(f'متاسفم! شما بازنده شدید. تاس پرتاب شده: {dice_roll}')
-    except ValueError:
-        update.message.reply_text('لطفا یک عدد صحیح وارد کنید.')
-
-# تابع اصلی که همه‌ی دستورات و پیام‌ها رو مدیریت می‌کند
-def main():
-    # توکن ربات تلگرام (توکن رو با توکن واقعی خود جایگزین کنید)
-    TOKEN = '6414210268:AAEL-RZiABoMzS_QY922hOQnpXcam9OgiF0'
-
-    # ایجاد updater و dispatcher برای مدیریت درخواست‌ها
+def main() -> None:
+    # ایجاد و تنظیمات آپدیتر
     updater = Updater(TOKEN)
 
-    # دریافت dispatcher برای اضافه کردن هندلرها
+    # دریافت دیسپیچر برای ثبت دستورات
     dispatcher = updater.dispatcher
 
-    # هندلر برای دستور /start
+    # ثبت دستورات
     dispatcher.add_handler(CommandHandler("start", start))
-
-    # هندلر برای دریافت پیام‌های متنی از کاربر و شروع بازی
-    dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, play_dice))
+    dispatcher.add_handler(CommandHandler("play", play))
 
     # شروع ربات
     updater.start_polling()
-
-    # انجام مداوم در پس‌زمینه
     updater.idle()
 
 if __name__ == '__main__':
