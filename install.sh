@@ -9,13 +9,13 @@ read -p "👑 لطفاً آیدی عددی ادمین را وارد کنید: " 
 # بروزرسانی و نصب پیش‌نیازها
 echo "🔄 در حال بروزرسانی سیستم و نصب پیش‌نیازها..."
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y python3 python3-pip
+sudo apt install -y python3 python3-pip git
 
 # نصب کتابخانه‌های مورد نیاز
 echo "📦 در حال نصب کتابخانه‌های پایتون..."
 pip3 install python-telegram-bot --upgrade
 
-# کلون کردن یا بروزرسانی سورس کد از گیت‌هاب
+# دریافت سورس کد از گیت‌هاب
 if [ -d "telegram-dice-bot" ]; then
     echo "🔄 بروزرسانی سورس کد..."
     cd telegram-dice-bot && git pull
@@ -25,15 +25,35 @@ else
     cd telegram-dice-bot
 fi
 
-# ایجاد فایل .env برای ذخیره اطلاعات حساس
+# ذخیره توکن و آیدی ادمین
 echo "🔐 ذخیره توکن و آیدی ادمین..."
 echo "BOT_TOKEN=$BOT_TOKEN" > .env
 echo "ADMIN_ID=$ADMIN_ID" >> .env
 
-# اجرای ربات
-echo "🚀 اجرای ربات..."
-nohup python3 bot.py &
+# اجرای ربات به صورت دائمی با `systemd`
+echo "🚀 تنظیم ربات برای اجرا به‌صورت دائمی..."
+cat <<EOF | sudo tee /etc/systemd/system/dicebot.service
+[Unit]
+Description=Telegram Dice Bot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 $(pwd)/bot.py
+WorkingDirectory=$(pwd)
+Environment="BOT_TOKEN=$BOT_TOKEN"
+Environment="ADMIN_ID=$ADMIN_ID"
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# فعال‌سازی و اجرای سرویس
+sudo systemctl daemon-reload
+sudo systemctl enable dicebot
+sudo systemctl restart dicebot
 
 echo "✅ ربات با موفقیت نصب و اجرا شد!"
-echo "برای دیدن لاگ‌های ربات از دستور زیر استفاده کنید:"
-echo "tail -f nohup.out"
+echo "برای بررسی وضعیت ربات از این دستور استفاده کنید:"
+echo "sudo systemctl status dicebot"
