@@ -9,7 +9,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # توکن ربات تلگرام
-TELEGRAM_TOKEN = "6414210268:AAEL-RZiABoMzS_QY922hOQnpXcam9OgiF0"
+TELEGRAM_TOKEN = "7049652701:AAF6VjrToI_iiEiYSnVe8oEVA-nDO9ISPAw"
 
 # تابع start برای شروع ربات
 def start(update: Update, context: CallbackContext) -> None:
